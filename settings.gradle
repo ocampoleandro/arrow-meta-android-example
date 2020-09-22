@@ -1,0 +1,4 @@
+include ':custom-create-plugin'
+include ':create-plugin'
+include ':app'
+rootProject.name = "ArrowExplorer"

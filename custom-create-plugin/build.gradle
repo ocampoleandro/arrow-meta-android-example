@@ -1,0 +1,31 @@
+import java.nio.file.Paths
+
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+dependencies {
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+    compileOnly "io.arrow-kt:compiler-plugin:1.4.10-SNAPSHOT"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+}
+
+// Create a new JAR with: Arrow Meta + new plugin
+task createNewPlugin(type: Jar, dependsOn: classes) {
+    archiveClassifier = "all"
+    from 'build/classes/kotlin/main'
+    from 'build/resources/main'
+    from (
+            zipTree(sourceSets.main.compileClasspath.find {
+                it.absolutePath.contains(Paths.get("io.arrow-kt","compiler-plugin").toString())
+            })
+    ) {
+        exclude 'META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar'
+    }
+}
